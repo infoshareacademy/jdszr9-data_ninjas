@@ -43,3 +43,17 @@ WITH average_salary AS
 	round(sum(percentage_pay_gap * region_population) / (SELECT sum(region_population) FROM average_salary), 3) AS avg_perc_pay_gap
 FROM average_salary 
 
+--korelacja średniej pensji z luką płacową
+
+WITH pay_gap_com AS 
+	(
+	select libgeo, 
+		snhm14 as avg_salary, 
+		(snhmh14-snhmf14) *100 /snhm14 as pay_gap
+	from net_salary_per_town_categories nsptc 
+	join departments_and_regions_france darf 
+	on nsptc.codgeo = darf.code_insee
+	) 
+	SELECT CORR(pay_gap, avg_salary) as kor_śred_pensja_pay_gap
+	FROM pay_gap_com
+
